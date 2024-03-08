@@ -152,4 +152,11 @@
     <field name="context">{'account_bank_statement_line_main_view': True}</field>
 </record>
 
+<menuitem
+    id="bank_st_line_menu"
+    name="Bank Statement Line"
+    action="account_bank_statement_line_action"
+    parent="account.menu_finance_receivables"
+    sequence="300"/>
+
 </odoo>
