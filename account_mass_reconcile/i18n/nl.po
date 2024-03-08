@@ -20,6 +20,7 @@ msgstr ""
 "X-Generator: Weblate 4.3.2\n"
 
 #. module: account_mass_reconcile
+#. odoo-python
 #: code:addons/account_mass_reconcile/models/mass_reconcile.py:0
 #, python-format
 msgid ""
@@ -27,10 +28,11 @@ msgid ""
 msgstr ""
 
 #. module: account_mass_reconcile
+#. odoo-python
 #: code:addons/account_mass_reconcile/models/base_advanced_reconciliation.py:0
 #, python-format
 msgid ""
-"A matcher %s is compared with a matcher %s, the _matchers and "
+"A matcher %(mkey)s is compared with a matcher %(omkey)s, the _matchers and "
 "_opposite_matchers are probably wrong"
 msgstr ""
 
@@ -120,12 +122,14 @@ msgid "Automatic Mass Reconcile History"
 msgstr ""
 
 #. module: account_mass_reconcile
+#. odoo-python
 #: code:addons/account_mass_reconcile/models/base_reconciliation.py:0
 #, python-format
 msgid "Automatic Write Off"
 msgstr "Automatisch afschrijven"
 
 #. module: account_mass_reconcile
+#. odoo-python
 #: code:addons/account_mass_reconcile/models/base_reconciliation.py:0
 #, python-format
 msgid "Automatic writeoff"
@@ -204,18 +208,12 @@ msgstr "datum van afletteren"
 #. module: account_mass_reconcile
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_account_mass_reconcile__display_name
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_account_mass_reconcile_method__display_name
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_advanced__display_name
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_advanced_name__display_name
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_advanced_ref__display_name
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_base__display_name
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_history__display_name
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_options__display_name
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_simple__display_name
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_simple_name__display_name
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_simple_partner__display_name
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_simple_reference__display_name
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_res_company__display_name
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_res_config_settings__display_name
 msgid "Display Name"
 msgstr "Te tonen naam"
 
@@ -228,7 +226,6 @@ msgstr "Geef de items weer welke in de laatste uitvoer zijn afgeletterd"
 #. module: account_mass_reconcile
 #: model:ir.actions.server,name:account_mass_reconcile.ir_cron_run_reconciliations_ir_actions_server
 #: model:ir.cron,cron_name:account_mass_reconcile.ir_cron_run_reconciliations
-#: model:ir.cron,name:account_mass_reconcile.ir_cron_run_reconciliations
 msgid "Do Automatic Reconciliations"
 msgstr "Automatisch afletteren uitvoeren"
 
@@ -250,11 +247,6 @@ msgstr "Filter"
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_account_mass_reconcile__message_follower_ids
 msgid "Followers"
 msgstr "Volgers"
-
-#. module: account_mass_reconcile
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_account_mass_reconcile__message_channel_ids
-msgid "Followers (Channels)"
-msgstr ""
 
 #. module: account_mass_reconcile
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_account_mass_reconcile__message_partner_ids
@@ -284,6 +276,11 @@ msgid "Group By..."
 msgstr "Groeperen op..."
 
 #. module: account_mass_reconcile
+#: model:ir.model.fields,field_description:account_mass_reconcile.field_account_mass_reconcile__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: account_mass_reconcile
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_account_mass_reconcile__history_ids
 #: model_terms:ir.ui.view,arch_db:account_mass_reconcile.account_mass_reconcile_form
 msgid "History"
@@ -305,24 +302,17 @@ msgstr ""
 #. module: account_mass_reconcile
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_account_mass_reconcile__id
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_account_mass_reconcile_method__id
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_advanced__id
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_advanced_name__id
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_advanced_ref__id
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_base__id
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_history__id
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_options__id
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_simple__id
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_simple_name__id
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_simple_partner__id
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_simple_reference__id
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_res_company__id
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_res_config_settings__id
 msgid "ID"
 msgstr "ID"
 
 #. module: account_mass_reconcile
 #: model:ir.model.fields,help:account_mass_reconcile.field_account_mass_reconcile__message_needaction
-#: model:ir.model.fields,help:account_mass_reconcile.field_account_mass_reconcile__message_unread
 msgid "If checked, new messages require your attention."
 msgstr ""
 
@@ -358,18 +348,12 @@ msgstr "Journaal"
 #. module: account_mass_reconcile
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_account_mass_reconcile____last_update
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_account_mass_reconcile_method____last_update
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_advanced____last_update
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_advanced_name____last_update
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_advanced_ref____last_update
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_base____last_update
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_history____last_update
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_options____last_update
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_simple____last_update
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_simple_name____last_update
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_simple_partner____last_update
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_mass_reconcile_simple_reference____last_update
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_res_company____last_update
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_res_config_settings____last_update
 msgid "Last Modified on"
 msgstr "Laatst bijgewerkt op"
 
@@ -528,18 +512,13 @@ msgstr "Aantal fouten"
 
 #. module: account_mass_reconcile
 #: model:ir.model.fields,help:account_mass_reconcile.field_account_mass_reconcile__message_needaction_counter
-msgid "Number of messages which requires an action"
+msgid "Number of messages requiring action"
 msgstr ""
 
 #. module: account_mass_reconcile
 #: model:ir.model.fields,help:account_mass_reconcile.field_account_mass_reconcile__message_has_error_counter
 msgid "Number of messages with delivery error"
 msgstr ""
-
-#. module: account_mass_reconcile
-#: model:ir.model.fields,help:account_mass_reconcile.field_account_mass_reconcile__message_unread_counter
-msgid "Number of unread messages"
-msgstr "Aantal ongelezen berichten"
 
 #. module: account_mass_reconcile
 #: model:ir.model,name:account_mass_reconcile.model_mass_reconcile_options
@@ -572,6 +551,7 @@ msgid "Reconciliation"
 msgstr "Afletteren"
 
 #. module: account_mass_reconcile
+#. odoo-python
 #: code:addons/account_mass_reconcile/models/mass_reconcile_history.py:0
 #: model_terms:ir.ui.view,arch_db:account_mass_reconcile.mass_reconcile_history_form
 #, python-format
@@ -646,12 +626,14 @@ msgid "The sequence field is used to order the reconcile method"
 msgstr ""
 
 #. module: account_mass_reconcile
+#. odoo-python
 #: code:addons/account_mass_reconcile/models/mass_reconcile.py:0
 #, python-format
 msgid "There is no history of reconciled items on the task: %s."
 msgstr ""
 
 #. module: account_mass_reconcile
+#. odoo-python
 #: code:addons/account_mass_reconcile/models/mass_reconcile.py:0
 #, python-format
 msgid "There was an error during reconciliation : %s"
@@ -668,21 +650,12 @@ msgid "Type"
 msgstr "Type"
 
 #. module: account_mass_reconcile
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_account_mass_reconcile__message_unread
-msgid "Unread Messages"
-msgstr "Ongelezen berichten"
-
-#. module: account_mass_reconcile
-#: model:ir.model.fields,field_description:account_mass_reconcile.field_account_mass_reconcile__message_unread_counter
-msgid "Unread Messages Counter"
-msgstr ""
-
-#. module: account_mass_reconcile
 #: model:ir.model.fields,field_description:account_mass_reconcile.field_account_mass_reconcile__unreconciled_count
 msgid "Unreconciled Items"
 msgstr ""
 
 #. module: account_mass_reconcile
+#. odoo-python
 #: code:addons/account_mass_reconcile/models/mass_reconcile.py:0
 #, python-format
 msgid "Unreconciled items"
@@ -714,3 +687,9 @@ msgstr "Afschrijving toegestaan"
 
 #~ msgid "SMS Delivery error"
 #~ msgstr "Kon SMS bericht niet afleveren"
+
+#~ msgid "Number of unread messages"
+#~ msgstr "Aantal ongelezen berichten"
+
+#~ msgid "Unread Messages"
+#~ msgstr "Ongelezen berichten"

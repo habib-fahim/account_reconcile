@@ -77,11 +77,11 @@ class MassReconcileBase(models.AbstractModel):
         # it would be great to use dict for params
         # but as we use _where_calc in _get_filter
         # which returns a list, we have to
-        # accomodate with that
+        # accommodate with that
         params = [self.account_id.id]
         if self.partner_ids:
             where += " AND account_move_line.partner_id IN %s"
-            params.append(tuple([line.id for line in self.partner_ids]))
+            params.append(tuple(line.id for line in self.partner_ids))
         return where, params
 
     def _get_filter(self):
@@ -100,10 +100,10 @@ class MassReconcileBase(models.AbstractModel):
         precision = self.env["decimal.precision"].precision_get("Account")
 
         writeoff_amount = round(
-            sum([line["amount_residual"] for line in lines]), precision
+            sum(line["amount_residual"] for line in lines), precision
         )
         writeoff_amount_curr = round(
-            sum([line["amount_residual_currency"] for line in lines]), precision
+            sum(line["amount_residual_currency"] for line in lines), precision
         )
 
         first_currency = lines[0]["currency_id"]
@@ -128,6 +128,9 @@ class MassReconcileBase(models.AbstractModel):
         def last_date(mlines):
             return max(mlines, key=itemgetter("date"))
 
+        def oldest_date(mlines):
+            return min(mlines, key=itemgetter("date"))
+
         def credit(mlines):
             return [line for line in mlines if line["credit"] > 0]
 
@@ -136,6 +139,8 @@ class MassReconcileBase(models.AbstractModel):
 
         if based_on == "newest":
             return last_date(lines)["date"]
+        elif based_on == "oldest":
+            return oldest_date(lines)["date"]
         elif based_on == "newest_credit":
             return last_date(credit(lines))["date"]
         elif based_on == "newest_debit":
@@ -172,7 +177,7 @@ class MassReconcileBase(models.AbstractModel):
 
         move = self.env["account.move"].create(
             {
-                "date": lines.env.context.get("date_p"),
+                "date": lines.env.context.get("date_p") or fields.Date.today(),
                 "journal_id": journal.id,
                 "currency_id": currency.id,
                 "line_ids": [(0, 0, write_off_vals), (0, 0, counter_part)],

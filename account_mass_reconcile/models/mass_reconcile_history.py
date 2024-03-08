@@ -57,10 +57,9 @@ class MassReconcileHistory(models.Model):
             "name": name,
             "view_mode": "tree,form",
             "view_id": False,
-            "view_type": "form",
             "res_model": "account.move.line",
             "type": "ir.actions.act_window",
-            "nodestroy": True,
+            "context": {"nodestroy": True},
             "target": "current",
             "domain": [("id", "in", move_line_ids)],
         }

@@ -37,14 +37,31 @@ class AccountMoveLineReconcileManual(models.TransientModel):
         default="start",
     )
     # START WRITE-OFF FIELDS
+    writeoff_model_id = fields.Many2one(
+        "account.reconcile.manual.model",
+        string="Model",
+        domain="[('company_id', '=', company_id)]",
+        check_company=True,
+    )
     writeoff_journal_id = fields.Many2one(
         "account.journal",
+        compute="_compute_writeoff",
+        readonly=False,
+        store=True,
+        precompute=True,
         string="Journal",
         domain="[('type', '=', 'general'), ('company_id', '=', company_id)]",
         check_company=True,
     )
     writeoff_date = fields.Date(string="Date", default=fields.Date.context_today)
-    writeoff_ref = fields.Char(string="Reference", default=lambda self: _("Write-off"))
+    writeoff_ref = fields.Char(
+        compute="_compute_writeoff",
+        readonly=False,
+        store=True,
+        precompute=True,
+        string="Reference",
+        default=lambda self: _("Write-off"),
+    )
     writeoff_type = fields.Selection(
         [
             ("income", "Income"),
@@ -59,16 +76,64 @@ class AccountMoveLineReconcileManual(models.TransientModel):
     )
     writeoff_account_id = fields.Many2one(
         "account.account",
+        compute="_compute_writeoff",
+        readonly=False,
+        store=True,
+        precompute=True,
         string="Write-off Account",
         domain="[('company_id', '=', company_id), ('deprecated', '=', False)]",
         check_company=True,
     )
-    writeoff_analytic_account_id = fields.Many2one(
-        "account.analytic.account",
-        string="Write-off Analytic Account",
-        domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]",
-        check_company=True,
+    writeoff_analytic_distribution = fields.Json(
+        string="Analytic",
+        compute="_compute_writeoff_analytic_distribution",
+        readonly=False,
+        store=True,
+        precompute=True,
     )
+    analytic_precision = fields.Integer(
+        default=lambda self: self.env["decimal.precision"].precision_get(
+            "Percentage Analytic"
+        ),
+    )
+
+    @api.depends("writeoff_model_id")
+    def _compute_writeoff(self):
+        for wiz in self:
+            if wiz.writeoff_model_id:
+                model = wiz.writeoff_model_id
+                wiz.writeoff_journal_id = model.journal_id
+                wiz.writeoff_ref = model.ref
+                if wiz.writeoff_type == "expense":
+                    wiz.writeoff_account_id = model.expense_account_id.id
+                    if model.expense_analytic_distribution:
+                        wiz.writeoff_analytic_distribution = (
+                            model.expense_analytic_distribution
+                        )
+                elif wiz.writeoff_type == "income":
+                    wiz.writeoff_account_id = model.income_account_id.id
+                    if model.income_analytic_distribution:
+                        wiz.writeoff_analytic_distribution = (
+                            model.income_analytic_distribution
+                        )
+            else:
+                journals = self.env["account.journal"].search(
+                    [("type", "=", "general"), ("company_id", "=", wiz.company_id.id)]
+                )
+                if len(journals) == 1:
+                    wiz.writeoff_journal_id = journals.id
+
+    @api.depends("writeoff_account_id")
+    def _compute_writeoff_analytic_distribution(self):
+        aadmo = self.env["account.analytic.distribution.model"]
+        for wiz in self:
+            if wiz.writeoff_account_id and not wiz.writeoff_analytic_distribution:
+                wiz.writeoff_analytic_distribution = aadmo._get_distribution(
+                    {
+                        "account_prefix": wiz.writeoff_account_id.code,
+                        "company_id": wiz.company_id.id,
+                    }
+                )
 
     @api.model
     def default_get(self, fields_list):
@@ -128,12 +193,6 @@ class AccountMoveLineReconcileManual(models.TransientModel):
             writeoff_type = "income"
         else:
             writeoff_type = "none"
-        general_journals = self.env["account.journal"].search(
-            [("type", "=", "general"), ("company_id", "=", company.id)]
-        )
-        writeoff_journal_id = False
-        if len(general_journals) == 1:
-            writeoff_journal_id = general_journals.id
         res.update(
             {
                 "count": count,
@@ -146,7 +205,6 @@ class AccountMoveLineReconcileManual(models.TransientModel):
                 "move_line_ids": move_lines.ids,
                 "writeoff_type": writeoff_type,
                 "writeoff_amount": writeoff_amount,
-                "writeoff_journal_id": writeoff_journal_id,
             }
         )
         return res
@@ -204,6 +262,7 @@ class AccountMoveLineReconcileManual(models.TransientModel):
                     0,
                     0,
                     {
+                        "display_type": "payment_term",
                         "account_id": self.account_id.id,
                         "partner_id": self.partner_id and self.partner_id.id or False,
                         "debit": debit,
@@ -214,12 +273,12 @@ class AccountMoveLineReconcileManual(models.TransientModel):
                     0,
                     0,
                     {
+                        "display_type": "product",
                         "account_id": self.writeoff_account_id.id,
                         "partner_id": self.partner_id and self.partner_id.id or False,
                         "debit": credit,
                         "credit": debit,
-                        "analytic_account_id": self.writeoff_analytic_account_id.id
-                        or False,
+                        "analytic_distribution": self.writeoff_analytic_distribution,
                     },
                 ),
             ],
@@ -235,7 +294,7 @@ class AccountMoveLineReconcileManual(models.TransientModel):
         self.move_line_ids.remove_move_reconcile()
         vals = self._prepare_writeoff_move()
         woff_move = self.env["account.move"].create(vals)
-        woff_move._post(soft=False)
+        woff_move.with_context(validate_analytic=True)._post(soft=False)
         to_rec_woff_line = woff_move.line_ids.filtered(
             lambda x: x.account_id.id == self.account_id.id
         )
@@ -265,7 +324,7 @@ class AccountMoveLineReconcileManual(models.TransientModel):
         if (
             self.writeoff_type in ("income", "expense")
             and account
-            and self.writeoff_type != account.internal_group
+            and self.writeoff_type not in account.account_type
         ):
             message = _(
                 "This is a/an '%(writeoff_type)s' write-off, "
@@ -275,7 +334,9 @@ class AccountMoveLineReconcileManual(models.TransientModel):
                     self.writeoff_type, self
                 ),
                 account_code=account.code,
-                account_type=account.user_type_id.name,
+                account_type=account._fields["account_type"].convert_to_export(
+                    account.account_type, account
+                ),
             )
             res = {
                 "warning": {

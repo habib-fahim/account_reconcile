@@ -58,7 +58,12 @@ class MassReconcileSimple(models.AbstractModel):
         return res
 
     def _simple_order(self, *args, **kwargs):
-        return "ORDER BY account_move_line.%s" % self._key_field
+        ret = "ORDER BY account_move_line.%s" % self._key_field
+        if self.date_base_on == "oldest":
+            ret += ", date"
+        elif self.date_base_on == "newest":
+            ret += ", date desc"
+        return ret
 
     def _action_rec(self):
         """Match only 2 move lines, do not allow partial reconcile"""
@@ -71,7 +76,7 @@ class MassReconcileSimple(models.AbstractModel):
         query = " ".join(
             (select, self._from_query(), where, where2, self._simple_order())
         )
-        self.flush()
+        self.env.flush_all()
         self.env.cr.execute(query, params + params2)
         lines = self.env.cr.dictfetchall()
         return self.rec_auto_lines_simple(lines)
